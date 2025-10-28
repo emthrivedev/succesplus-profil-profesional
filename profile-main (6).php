@@ -104,8 +104,6 @@ $inline_css = '
     font-size:20px;
     font-weight:700;
     color:var(--sp-dark);
-    border-bottom:2px solid var(--sp-accent);
-    padding-bottom:10px;
     display:flex;
     align-items:center;
     gap:8px;

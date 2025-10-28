@@ -398,30 +398,27 @@ function sp_load_cv_negations($user_id) {
     }
 
     $session = $wpdb->get_row($wpdb->prepare(
-        "SELECT cv_data FROM $table WHERE user_id = %d ORDER BY id DESC LIMIT 1",
+        "SELECT cv_negations FROM $table WHERE user_id = %d ORDER BY id DESC LIMIT 1",
         $user_id
     ));
 
-    if (!$session || empty($session->cv_data)) {
+    if (!$session || empty($session->cv_negations)) {
         return $negations;
     }
 
-    $cv_data_raw = json_decode($session->cv_data, true);
-    if (!is_array($cv_data_raw)) {
+    $cv_negations_raw = json_decode($session->cv_negations, true);
+    if (!is_array($cv_negations_raw)) {
         return $negations;
     }
 
-    // Extract negation flags from CV data
-    foreach ($cv_data_raw as $key => $value) {
-        if (strpos($key, '_negated') !== false) {
-            $field_name = str_replace(array('cv_', '_negated'), '', $key);
-            if ($value === '1' || $value === 1 || $value === true) {
-                $negations[$field_name] = array(
-                    'field_name' => $field_name,
-                    'field_label' => sp_humanize_field_name($field_name),
-                    'is_negated' => true
-                );
-            }
+    // Build negations array from the cv_negations column
+    foreach ($cv_negations_raw as $field_name => $is_negated) {
+        if ($is_negated === true || $is_negated === 1 || $is_negated === '1') {
+            $negations[$field_name] = array(
+                'field_name' => $field_name,
+                'field_label' => sp_humanize_field_name($field_name),
+                'is_negated' => true
+            );
         }
     }
 
