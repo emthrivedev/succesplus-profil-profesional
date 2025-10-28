@@ -299,10 +299,11 @@ class SP_Professional_Profile_Complete {
     }
     
     /**
-     * Template title
+     * Template title - REMOVED for cleaner business view
      */
     public function template_title() {
-        echo 'Profil Profesional';
+        // Title removed for modern, business-focused display
+        echo '';
     }
     
     /**

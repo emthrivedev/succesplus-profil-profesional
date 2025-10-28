@@ -21,13 +21,14 @@ function sp_load_profile_data($user_id) {
         'basic_info' => sp_load_basic_info($user_id),
         'test_results' => sp_load_test_results($user_id),
         'cv_data' => sp_load_cv_data($user_id),
+        'cv_negations' => sp_load_cv_negations($user_id),
         'soft_skills' => sp_load_soft_skills($user_id),
         'ai_interpretation' => sp_load_ai_interpretation($user_id),
         'completion' => sp_get_completion_percentage($user_id),
         'session_data' => sp_load_session_data($user_id),
         'debug' => sp_get_debug_info($user_id)
     );
-    
+
     return $data;
 }
 
@@ -380,6 +381,51 @@ function sp_extract_field_entries($cv_data, $fields, $possible_names) {
         }
     }
     return array();
+}
+
+/**
+ * Load CV negations - fields that user marked as "N/A" or "Don't have"
+ */
+function sp_load_cv_negations($user_id) {
+    global $wpdb;
+
+    $negations = array();
+
+    // Check session for negation data
+    $table = $wpdb->prefix . 'sp_onboarding_sessions';
+    if ($wpdb->get_var("SHOW TABLES LIKE '$table'") != $table) {
+        return $negations;
+    }
+
+    $session = $wpdb->get_row($wpdb->prepare(
+        "SELECT cv_data FROM $table WHERE user_id = %d ORDER BY id DESC LIMIT 1",
+        $user_id
+    ));
+
+    if (!$session || empty($session->cv_data)) {
+        return $negations;
+    }
+
+    $cv_data_raw = json_decode($session->cv_data, true);
+    if (!is_array($cv_data_raw)) {
+        return $negations;
+    }
+
+    // Extract negation flags from CV data
+    foreach ($cv_data_raw as $key => $value) {
+        if (strpos($key, '_negated') !== false) {
+            $field_name = str_replace(array('cv_', '_negated'), '', $key);
+            if ($value === '1' || $value === 1 || $value === true) {
+                $negations[$field_name] = array(
+                    'field_name' => $field_name,
+                    'field_label' => sp_humanize_field_name($field_name),
+                    'is_negated' => true
+                );
+            }
+        }
+    }
+
+    return $negations;
 }
 
 /**
