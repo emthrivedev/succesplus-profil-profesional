@@ -432,6 +432,9 @@ function sp_load_cv_negations($user_id) {
  * Humanize field name (convert underscores to spaces, capitalize)
  */
 function sp_humanize_field_name($field_name) {
+    // Strip cv_ prefix if present
+    $field_name = preg_replace('/^cv_/', '', $field_name);
+
     $translations = array(
         'experienta_munca' => 'Experiență Profesională',
         'experienta_profesionala' => 'Experiență Profesională',
@@ -454,11 +457,11 @@ function sp_humanize_field_name($field_name) {
         'adresa' => 'Adresă',
         'address' => 'Adresă'
     );
-    
+
     if (isset($translations[$field_name])) {
         return $translations[$field_name];
     }
-    
+
     return ucwords(str_replace('_', ' ', $field_name));
 }
 
