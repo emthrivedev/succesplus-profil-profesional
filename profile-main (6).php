@@ -28,8 +28,8 @@ $is_own_profile = (get_current_user_id() === $user_id);
 // Clean Professional CSS
 $inline_css = '
 <style id="sp-profile-clean-css">
-*{font-family:"Raleway",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important}
 .sp-professional-profile-wrapper{font-family:"Raleway",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;max-width:1200px;margin:0 auto;padding:20px;background:#fff}
+.sp-professional-profile-wrapper *:not(.dashicons){font-family:"Raleway",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 .sp-profile-grid{display:grid;grid-template-columns:1fr 350px;gap:30px;margin-top:20px}
 .sp-profile-card{background:white;border-radius:12px;padding:25px;margin-bottom:20px;border:1px solid #e5e7eb;box-shadow:none!important}
 .sp-card-title{margin:0 0 20px 0;font-size:20px;font-weight:600;color:#1a1a1a;border-bottom:2px solid #C5EEF9;padding-bottom:10px;display:flex;align-items:center;gap:8px}
@@ -42,7 +42,8 @@ $inline_css = '
 .sp-skill-name{font-size:14px}
 .sp-skill-points{background:rgba(0,0,0,0.15);padding:3px 8px;border-radius:10px;font-size:12px;font-weight:700}
 .sp-intelligence-dominant{display:flex;align-items:center;gap:15px;font-size:24px;font-weight:700;margin-bottom:15px;padding:25px;background:linear-gradient(135deg,#0292B7 0%,#1AC8DB 100%);border-radius:12px;color:white}
-.sp-intelligence-icon{font-size:48px}
+.sp-intelligence-icon-wrapper{width:80px;height:80px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sp-intelligence-icon-wrapper .dashicons{font-size:48px;width:48px;height:48px;color:white}
 .sp-intelligence-secondary{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
 .sp-badge{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:20px;font-size:14px;font-weight:600;white-space:nowrap;color:white}
 .sp-btn-download{width:100%;background:linear-gradient(135deg,#0292B7 0%,#1AC8DB 100%);color:white;border:none;padding:15px 24px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.3s ease;display:inline-flex;align-items:center;justify-content:center;gap:10px}
@@ -111,7 +112,9 @@ echo $inline_css;
                     Inteligență Dominantă
                 </h2>
                 <div class="sp-intelligence-dominant">
-                    <span class="sp-intelligence-icon"><?php echo $test['dominant']['icon']; ?></span>
+                    <div class="sp-intelligence-icon-wrapper">
+                        <span class="dashicons dashicons-awards"></span>
+                    </div>
                     <div style="flex:1">
                         <div style="color:white"><?php echo esc_html($test['dominant']['name']); ?></div>
                         <div style="font-size:20px;color:rgba(255,255,255,0.9);font-weight:normal">
@@ -128,7 +131,7 @@ echo $inline_css;
                     foreach ($top_three as $intel):
                     ?>
                     <span class="sp-badge" style="background-color:<?php echo $intel['color']; ?>">
-                        <?php echo $intel['icon']; ?> <?php echo esc_html($intel['name']); ?> (<?php echo number_format($intel['score'], 0); ?>%)
+                        <?php echo esc_html($intel['name']); ?> (<?php echo number_format($intel['score'], 0); ?>%)
                     </span>
                     <?php endforeach; ?>
                 </div>
