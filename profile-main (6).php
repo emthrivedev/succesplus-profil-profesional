@@ -28,6 +28,7 @@ $is_own_profile = (get_current_user_id() === $user_id);
 // Clean Professional CSS
 $inline_css = '
 <style id="sp-profile-clean-css">
+*{font-family:"Raleway",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important}
 .sp-professional-profile-wrapper{font-family:"Raleway",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;max-width:1200px;margin:0 auto;padding:20px;background:#fff}
 .sp-profile-grid{display:grid;grid-template-columns:1fr 350px;gap:30px;margin-top:20px}
 .sp-profile-card{background:white;border-radius:12px;padding:25px;margin-bottom:20px;border:1px solid #e5e7eb;box-shadow:none!important}
@@ -40,9 +41,10 @@ $inline_css = '
 .sp-skill-badge{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:20px;color:white;font-size:14px;font-weight:600;white-space:nowrap}
 .sp-skill-name{font-size:14px}
 .sp-skill-points{background:rgba(0,0,0,0.15);padding:3px 8px;border-radius:10px;font-size:12px;font-weight:700}
-.sp-intelligence-dominant{display:flex;align-items:center;gap:15px;font-size:24px;font-weight:700;margin-bottom:15px;padding:20px;background:#f8f9fa;border-radius:10px}
+.sp-intelligence-dominant{display:flex;align-items:center;gap:15px;font-size:24px;font-weight:700;margin-bottom:15px;padding:25px;background:linear-gradient(135deg,#0292B7 0%,#1AC8DB 100%);border-radius:12px;color:white}
 .sp-intelligence-icon{font-size:48px}
 .sp-intelligence-secondary{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
+.sp-badge{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:20px;font-size:14px;font-weight:600;white-space:nowrap;color:white}
 .sp-btn-download{width:100%;background:linear-gradient(135deg,#0292B7 0%,#1AC8DB 100%);color:white;border:none;padding:15px 24px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.3s ease;display:inline-flex;align-items:center;justify-content:center;gap:10px}
 .sp-btn-download:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(2,146,183,0.3)}
 .sp-btn-download .dashicons{font-size:20px;width:20px;height:20px}
@@ -111,8 +113,8 @@ echo $inline_css;
                 <div class="sp-intelligence-dominant">
                     <span class="sp-intelligence-icon"><?php echo $test['dominant']['icon']; ?></span>
                     <div style="flex:1">
-                        <div><?php echo esc_html($test['dominant']['name']); ?></div>
-                        <div style="font-size:20px;color:#64748b;font-weight:normal">
+                        <div style="color:white"><?php echo esc_html($test['dominant']['name']); ?></div>
+                        <div style="font-size:20px;color:rgba(255,255,255,0.9);font-weight:normal">
                             <?php echo number_format($test['dominant']['score'], 1); ?>%
                         </div>
                     </div>
