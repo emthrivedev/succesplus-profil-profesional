@@ -43,7 +43,7 @@ $inline_css = '
 .sp-skill-points{background:rgba(0,0,0,0.15);padding:3px 8px;border-radius:10px;font-size:12px;font-weight:700}
 .sp-intelligence-dominant{display:flex;align-items:center;gap:15px;font-size:24px;font-weight:700;margin-bottom:15px;padding:25px;background:linear-gradient(135deg,#0292B7 0%,#1AC8DB 100%);border-radius:12px;color:white}
 .sp-intelligence-icon-wrapper{width:80px;height:80px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.sp-intelligence-icon-wrapper .dashicons{font-size:48px;width:48px;height:48px;color:white}
+.sp-intelligence-emoji{font-size:48px;line-height:1}
 .sp-intelligence-secondary{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
 .sp-badge{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:20px;font-size:14px;font-weight:600;white-space:nowrap;color:white}
 .sp-btn-download{width:100%;background:linear-gradient(135deg,#0292B7 0%,#1AC8DB 100%);color:white;border:none;padding:15px 24px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.3s ease;display:inline-flex;align-items:center;justify-content:center;gap:10px}
@@ -113,7 +113,7 @@ echo $inline_css;
                 </h2>
                 <div class="sp-intelligence-dominant">
                     <div class="sp-intelligence-icon-wrapper">
-                        <span class="dashicons dashicons-awards"></span>
+                        <span class="sp-intelligence-emoji"><?php echo $test['dominant']['icon']; ?></span>
                     </div>
                     <div style="flex:1">
                         <div style="color:white"><?php echo esc_html($test['dominant']['name']); ?></div>
@@ -131,7 +131,7 @@ echo $inline_css;
                     foreach ($top_three as $intel):
                     ?>
                     <span class="sp-badge" style="background-color:<?php echo $intel['color']; ?>">
-                        <?php echo esc_html($intel['name']); ?> (<?php echo number_format($intel['score'], 0); ?>%)
+                        <?php echo $intel['icon']; ?> <?php echo esc_html($intel['name']); ?> (<?php echo number_format($intel['score'], 0); ?>%)
                     </span>
                     <?php endforeach; ?>
                 </div>

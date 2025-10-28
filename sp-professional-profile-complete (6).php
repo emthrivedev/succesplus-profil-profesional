@@ -17,8 +17,8 @@ class SP_Professional_Profile_Complete {
     
     private $plugin_path;
     private $plugin_url;
-    private $version = '6.3.3';
-    private $db_version = '6.3.3';
+    private $version = '6.3.4';
+    private $db_version = '6.3.4';
     
     public function __construct() {
         // Use __FILE__ for correct path resolution
