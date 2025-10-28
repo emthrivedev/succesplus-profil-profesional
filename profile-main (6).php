@@ -30,7 +30,7 @@ $inline_css = '
 <style id="sp-profile-clean-css">
 .sp-professional-profile-wrapper{font-family:"Raleway",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;max-width:1200px;margin:0 auto;padding:20px;background:#fff}
 .sp-profile-grid{display:grid;grid-template-columns:1fr 350px;gap:30px;margin-top:20px}
-.sp-profile-card{background:white;border-radius:12px;padding:25px;margin-bottom:20px;border:1px solid #e5e7eb}
+.sp-profile-card{background:white;border-radius:12px;padding:25px;margin-bottom:20px;border:1px solid #e5e7eb;box-shadow:none!important}
 .sp-card-title{margin:0 0 20px 0;font-size:20px;font-weight:600;color:#1a1a1a;border-bottom:2px solid #C5EEF9;padding-bottom:10px;display:flex;align-items:center;gap:8px}
 .sp-card-title .dashicons{color:#0292B7;font-size:24px;width:24px;height:24px}
 .sp-sidebar-title{margin:0 0 15px 0;font-size:16px;font-weight:600;color:#0292B7;display:flex;align-items:center;gap:6px}
@@ -372,6 +372,15 @@ echo $inline_css;
             <?php endif; ?>
 
             <!-- Negations List -->
+            <?php
+            // DEBUG: Show negation count
+            if ($is_own_profile) {
+                echo '<!-- DEBUG: Negations count: ' . count($negations) . ' -->';
+                if (!empty($negations)) {
+                    echo '<!-- DEBUG: Negation fields: ' . implode(', ', array_keys($negations)) . ' -->';
+                }
+            }
+            ?>
             <?php if (!empty($negations)): ?>
             <div class="sp-negations-sidebar">
                 <h3 class="sp-sidebar-title" style="margin:0 0 12px 0">
