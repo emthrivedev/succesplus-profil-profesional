@@ -36,8 +36,12 @@ $inline_css = '
 .sp-sidebar-title{margin:0 0 15px 0;font-size:16px;font-weight:600;color:#0292B7;display:flex;align-items:center;gap:6px}
 .sp-sidebar-title .dashicons{font-size:20px;width:20px;height:20px}
 .sp-specialization-main{font-size:24px;font-weight:700;color:#0292B7;line-height:1.3;padding:20px;background:linear-gradient(135deg,#f0f9ff 0%,#e0f2fe 100%);border-radius:10px;margin-bottom:20px}
-.sp-badges-container{display:flex;flex-wrap:wrap;gap:10px}
-.sp-badge{display:inline-block;padding:8px 16px;border-radius:20px;font-size:14px;font-weight:600;white-space:nowrap;color:white}
+.sp-skills-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:15px}
+.sp-skill-card{background:#f8f9fa;padding:15px;border-radius:8px;border-left:3px solid #0292B7}
+.sp-skill-name{margin:0 0 10px 0;font-size:14px;font-weight:600;color:#1a1a1a}
+.sp-skill-bar{height:8px;background:#e5e7eb;border-radius:4px;overflow:hidden;margin-bottom:8px}
+.sp-skill-bar-fill{height:100%;border-radius:4px;transition:width 1s ease}
+.sp-skill-points{font-size:12px;font-weight:600;color:#64748b;text-align:right}
 .sp-intelligence-dominant{display:flex;align-items:center;gap:15px;font-size:24px;font-weight:700;margin-bottom:15px;padding:20px;background:#f8f9fa;border-radius:10px}
 .sp-intelligence-icon{font-size:48px}
 .sp-intelligence-secondary{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
@@ -176,11 +180,20 @@ echo $inline_css;
                     <span class="dashicons dashicons-awards"></span>
                     Soft Skills
                 </h2>
-                <div class="sp-badges-container">
-                    <?php foreach ($skills as $index => $skill): ?>
-                    <span class="sp-badge" style="background-color:<?php echo sp_get_skill_color($index); ?>">
-                        <?php echo esc_html($skill); ?>
-                    </span>
+                <div class="sp-skills-grid">
+                    <?php foreach ($skills as $skill_data):
+                        $skill_name = is_array($skill_data) ? $skill_data['skill'] : $skill_data;
+                        $skill_points = is_array($skill_data) && isset($skill_data['points']) ? intval($skill_data['points']) : 5;
+                        $skill_color = is_array($skill_data) && isset($skill_data['color']) ? $skill_data['color'] : '#0292B7';
+                        $bar_width = ($skill_points / 10) * 100;
+                    ?>
+                    <div class="sp-skill-card">
+                        <h4 class="sp-skill-name"><?php echo esc_html($skill_name); ?></h4>
+                        <div class="sp-skill-bar">
+                            <div class="sp-skill-bar-fill" style="width:<?php echo $bar_width; ?>%;background-color:<?php echo esc_attr($skill_color); ?>"></div>
+                        </div>
+                        <div class="sp-skill-points"><?php echo $skill_points; ?> puncte</div>
+                    </div>
                     <?php endforeach; ?>
                 </div>
             </div>

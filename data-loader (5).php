@@ -466,46 +466,72 @@ function sp_humanize_field_name($field_name) {
 }
 
 function sp_load_soft_skills($user_id) {
-    // TRY 1: AI analysis
+    // TRY 1: AI analysis - return full skill objects with points and colors
     $ai_analysis = get_user_meta($user_id, 'sp_ai_analysis', true);
-    
+
     if ($ai_analysis) {
         if (is_string($ai_analysis)) {
             $ai_analysis = json_decode($ai_analysis, true);
         }
-        
+
         if (is_array($ai_analysis) && isset($ai_analysis['soft_skills']) && is_array($ai_analysis['soft_skills'])) {
             $skills = array();
             foreach ($ai_analysis['soft_skills'] as $skill_data) {
                 if (is_array($skill_data) && isset($skill_data['skill'])) {
-                    $skills[] = sp_fix_utf8($skill_data['skill']);
+                    // Return full skill object with points and color
+                    $skills[] = array(
+                        'skill' => sp_fix_utf8($skill_data['skill']),
+                        'points' => isset($skill_data['points']) ? intval($skill_data['points']) : 5,
+                        'color' => isset($skill_data['color']) ? $skill_data['color'] : '#0292B7'
+                    );
                 } elseif (is_string($skill_data)) {
-                    $skills[] = sp_fix_utf8($skill_data);
+                    // Legacy format: just skill name
+                    $skills[] = array(
+                        'skill' => sp_fix_utf8($skill_data),
+                        'points' => 5,
+                        'color' => '#0292B7'
+                    );
                 }
             }
-            
+
             if (!empty($skills)) {
                 return $skills;
             }
         }
     }
-    
-    // TRY 2: Direct meta
+
+    // TRY 2: Direct meta (legacy format)
     $soft_skills = get_user_meta($user_id, 'sp_soft_skills', true);
-    
+
     if (!$soft_skills) {
         return array();
     }
-    
+
+    $skills_array = array();
     if (is_string($soft_skills)) {
         $decoded = json_decode($soft_skills, true);
         if (is_array($decoded)) {
-            return array_map('sp_fix_utf8', $decoded);
+            $skills_array = $decoded;
+        } else {
+            $skills_array = array_map('trim', explode(',', $soft_skills));
         }
-        return array_map('trim', array_map('sp_fix_utf8', explode(',', $soft_skills)));
+    } elseif (is_array($soft_skills)) {
+        $skills_array = $soft_skills;
     }
-    
-    return is_array($soft_skills) ? array_map('sp_fix_utf8', $soft_skills) : array();
+
+    // Convert to full format
+    $result = array();
+    foreach ($skills_array as $skill) {
+        if (is_string($skill)) {
+            $result[] = array(
+                'skill' => sp_fix_utf8($skill),
+                'points' => 5,
+                'color' => '#0292B7'
+            );
+        }
+    }
+
+    return $result;
 }
 
 function sp_load_ai_interpretation($user_id) {
