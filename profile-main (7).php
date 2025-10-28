@@ -1,7 +1,7 @@
 <?php
 /**
- * Professional Profile Template - Clean Business View v6.1
- * Fixed UTF-8, removed emojis, restored original design elements
+ * Professional Profile Template - Clean Business View v6.2
+ * Removed debug, moved completion badge, added negation sidebar display
  */
 
 if (!defined('ABSPATH')) exit;
@@ -22,26 +22,15 @@ $negations = $profile_data['cv_negations'];
 $skills = $profile_data['soft_skills'];
 $ai = $profile_data['ai_interpretation'];
 $completion = $profile_data['completion'];
-$session = $profile_data['session_data'];
-$debug = $profile_data['debug'];
 
 $is_own_profile = (get_current_user_id() === $user_id);
-$is_admin = current_user_can('administrator');
-$show_debug = ($is_own_profile || $is_admin) && isset($_GET['debug']);
 
 // Clean Professional CSS
 $inline_css = '
 <style id="sp-profile-clean-css">
 .sp-professional-profile-wrapper{font-family:"Raleway",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;max-width:1200px;margin:0 auto;padding:20px;background:#fff}
-.sp-profile-completion-badge{display:flex;align-items:center;gap:15px;background:linear-gradient(135deg,#0292B7 0%,#1AC8DB 100%);padding:15px 25px;border-radius:10px;margin-bottom:30px;color:white;box-shadow:0 4px 12px rgba(2,146,183,0.2);width:fit-content}
-.sp-completion-circle{position:relative;width:80px;height:80px}
-.sp-completion-circle svg{transform:rotate(-90deg)}
-.sp-circle-bg{fill:none;stroke:rgba(255,255,255,0.2);stroke-width:6}
-.sp-circle-progress{fill:none;stroke:white;stroke-width:6;stroke-linecap:round;stroke-dasharray:219.8;transition:stroke-dashoffset 1s ease}
-.sp-percentage{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:20px;font-weight:700;color:white}
-.sp-completion-label{font-size:14px;font-weight:600;color:white}
 .sp-profile-grid{display:grid;grid-template-columns:1fr 350px;gap:30px;margin-top:20px}
-.sp-profile-card{background:white;border-radius:12px;padding:25px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,0.08);border:1px solid #e5e7eb}
+.sp-profile-card{background:white;border-radius:12px;padding:25px;margin-bottom:20px;border:1px solid #e5e7eb}
 .sp-card-title{margin:0 0 20px 0;font-size:20px;font-weight:600;color:#1a1a1a;border-bottom:2px solid #C5EEF9;padding-bottom:10px;display:flex;align-items:center;gap:8px}
 .sp-card-title .dashicons{color:#0292B7;font-size:24px;width:24px;height:24px}
 .sp-sidebar-title{margin:0 0 15px 0;font-size:16px;font-weight:600;color:#0292B7;display:flex;align-items:center;gap:6px}
@@ -52,22 +41,18 @@ $inline_css = '
 .sp-intelligence-dominant{display:flex;align-items:center;gap:15px;font-size:24px;font-weight:700;margin-bottom:15px;padding:20px;background:#f8f9fa;border-radius:10px}
 .sp-intelligence-icon{font-size:48px}
 .sp-intelligence-secondary{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
-.sp-btn-download{width:100%;background:linear-gradient(135deg,#0292B7 0%,#1AC8DB 100%);color:white;border:none;padding:15px 24px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.3s ease;box-shadow:0 4px 12px rgba(2,146,183,0.3);display:inline-flex;align-items:center;justify-content:center;gap:10px}
-.sp-btn-download:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(2,146,183,0.4)}
+.sp-btn-download{width:100%;background:linear-gradient(135deg,#0292B7 0%,#1AC8DB 100%);color:white;border:none;padding:15px 24px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.3s ease;display:inline-flex;align-items:center;justify-content:center;gap:10px}
+.sp-btn-download:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(2,146,183,0.3)}
 .sp-btn-download .dashicons{font-size:20px;width:20px;height:20px}
 .sp-contact-info{display:flex;flex-direction:column;gap:12px}
 .sp-contact-item{display:flex;align-items:center;gap:10px;font-size:14px;color:#4a5568}
 .sp-contact-item .dashicons{color:#0292B7;font-size:18px;width:18px;height:18px}
 .sp-intelligence-bars{display:flex;flex-direction:column;gap:15px}
 .sp-bar-label{display:flex;justify-content:space-between;font-size:13px;font-weight:600;color:#4a5568;align-items:center}
-.sp-bar-label .dashicons{font-size:16px;width:16px;height:16px;margin-right:4px}
 .sp-bar-track{height:8px;background:#e5e7eb;border-radius:4px;overflow:hidden}
 .sp-bar-fill{height:100%;border-radius:4px;transition:width 1s ease}
-.sp-notice-warning{display:flex;align-items:center;gap:15px;padding:20px;background:#fff3cd;border-left:4px solid #ffc107;border-radius:10px;margin-bottom:30px}
-.sp-notice-warning .dashicons{font-size:32px;width:32px;height:32px;color:#ffc107}
 .sp-cv-section{margin-bottom:25px}
-.sp-cv-field-label{font-size:16px;font-weight:700;color:#0292B7;margin:0 0 12px 0;display:flex;align-items:center;gap:6px}
-.sp-cv-field-label .dashicons{font-size:18px;width:18px;height:18px}
+.sp-cv-field-label{font-size:16px;font-weight:700;color:#0292B7;margin:0 0 12px 0}
 .sp-cv-field-value{padding:15px;background:#f8f9fa;border-radius:8px;margin-bottom:10px;font-size:14px;line-height:1.7;color:#374151;border-left:3px solid #0292B7}
 .sp-negation-notice{display:flex;align-items:center;gap:12px;padding:12px 16px;background:#fef3c7;border-left:3px solid #f59e0b;border-radius:6px;margin-bottom:10px}
 .sp-negation-notice .dashicons{color:#f59e0b;font-size:20px;width:20px;height:20px}
@@ -77,9 +62,17 @@ $inline_css = '
 .sp-ai-meta-title{font-size:13px;font-weight:700;color:#0284c7;margin-bottom:8px;display:flex;align-items:center;gap:6px}
 .sp-ai-meta-title .dashicons{font-size:16px;width:16px;height:16px}
 .sp-ai-meta-value{font-size:14px;color:#4a5568;line-height:1.6}
-.sp-debug-toggle{position:fixed;bottom:20px;right:20px;background:#6366f1;color:white;padding:12px 20px;border-radius:8px;cursor:pointer;z-index:999;box-shadow:0 4px 12px rgba(99,102,241,0.4);text-decoration:none;display:flex;align-items:center;gap:8px}
-.sp-debug-toggle .dashicons{font-size:18px;width:18px;height:18px}
-.sp-notice-debug{background:#f3f4f6;border-left:4px solid #6366f1;padding:20px;border-radius:10px;margin-bottom:30px;font-family:monospace;font-size:11px}
+.sp-negations-sidebar{background:#fff9e6;border-radius:10px;padding:20px;margin-bottom:20px;border:1px solid #fde68a}
+.sp-negations-list{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.sp-negation-item{display:flex;align-items:center;gap:8px;font-size:13px;color:#92400e;padding:8px 12px;background:#fef3c7;border-radius:6px}
+.sp-negation-item .dashicons{color:#f59e0b;font-size:16px;width:16px;height:16px;flex-shrink:0}
+.sp-profile-completion-badge{display:flex;align-items:center;gap:15px;background:linear-gradient(135deg,#fbbf24 0%,#f59e0b 100%);padding:15px 20px;border-radius:10px;margin-bottom:20px;color:white}
+.sp-completion-circle{position:relative;width:60px;height:60px}
+.sp-completion-circle svg{transform:rotate(-90deg)}
+.sp-circle-bg{fill:none;stroke:rgba(255,255,255,0.3);stroke-width:5}
+.sp-circle-progress{fill:none;stroke:white;stroke-width:5;stroke-linecap:round;stroke-dasharray:164.85;transition:stroke-dashoffset 1s ease}
+.sp-percentage{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:16px;font-weight:700;color:white}
+.sp-completion-label{font-size:13px;font-weight:600;color:white;line-height:1.4}
 @media (max-width:968px){.sp-profile-grid{grid-template-columns:1fr}.sp-profile-right{order:-1}}
 @media (max-width:768px){.sp-profile-card{padding:20px}.sp-card-title{font-size:18px}.sp-specialization-main{font-size:20px}}
 </style>
@@ -88,61 +81,6 @@ echo $inline_css;
 ?>
 
 <div class="sp-professional-profile-wrapper">
-
-    <!-- Debug Toggle -->
-    <?php if ($is_own_profile || $is_admin): ?>
-    <a href="<?php echo add_query_arg('debug', $show_debug ? '0' : '1'); ?>" class="sp-debug-toggle">
-        <span class="dashicons dashicons-bug"></span>
-        <?php echo $show_debug ? 'Ascunde Debug' : 'Arată Debug'; ?>
-    </a>
-    <?php endif; ?>
-
-    <!-- Debug Info -->
-    <?php if ($show_debug): ?>
-    <div class="sp-notice-debug">
-        <strong style="color:#6366f1">DEBUG MODE</strong>
-        <pre style="margin:10px 0;white-space:pre-wrap"><?php
-echo "User ID: {$user_id}\n";
-echo "Test Status: " . ($debug['test_status'] ?: 'NOT SET') . "\n";
-echo "CV Status: " . ($debug['cv_status'] ?: 'NOT SET') . "\n";
-echo "CV Entries: " . ($debug['cv_entries_count'] ?? 0) . "\n";
-echo "Negations: " . count($negations) . "\n";
-if (!empty($negations)) {
-    echo "Negated Fields: " . implode(', ', array_keys($negations)) . "\n";
-}
-        ?></pre>
-    </div>
-    <?php endif; ?>
-
-    <!-- Completion Badge -->
-    <div class="sp-profile-completion-badge">
-        <div class="sp-completion-circle" data-percentage="<?php echo $completion; ?>">
-            <svg width="80" height="80">
-                <circle class="sp-circle-bg" cx="40" cy="40" r="35"></circle>
-                <circle class="sp-circle-progress" cx="40" cy="40" r="35"
-                        style="stroke-dashoffset: <?php echo 219.8 - (219.8 * $completion / 100); ?>;"></circle>
-            </svg>
-            <div class="sp-percentage"><?php echo $completion; ?>%</div>
-        </div>
-        <span class="sp-completion-label">Profil Complet</span>
-    </div>
-
-    <?php if (!sp_is_profile_complete($user_id)): ?>
-    <div class="sp-notice-warning">
-        <span class="dashicons dashicons-warning"></span>
-        <div style="flex:1">
-            <strong>Profil Incomplet</strong>
-            <p style="margin:5px 0 0 0">
-                <?php
-                $missing = array();
-                if ($debug['test_status'] !== 'completed') $missing[] = 'testul vocațional';
-                if (empty($cv) || ($debug['cv_entries_count'] ?? 0) == 0) $missing[] = 'CV-ul';
-                echo 'Completează ' . implode(' și ', $missing) . ' pentru a debloca toate funcționalitățile.';
-                ?>
-            </p>
-        </div>
-    </div>
-    <?php endif; ?>
 
     <div class="sp-profile-grid">
 
@@ -253,7 +191,7 @@ if (!empty($negations)) {
             <div class="sp-profile-card">
                 <h2 class="sp-card-title">
                     <span class="dashicons dashicons-media-document"></span>
-                    Date Curriculum Vitae
+                    Date Complete
                 </h2>
                 <?php foreach ($cv['entries'] as $field_id => $entries):
                     $field_info = $cv['fields'][$field_id] ?? null;
@@ -264,7 +202,6 @@ if (!empty($negations)) {
                 ?>
                 <div class="sp-cv-section">
                     <h3 class="sp-cv-field-label">
-                        <span class="dashicons dashicons-yes"></span>
                         <?php echo esc_html($field_info['field_label']); ?>
                     </h3>
                     <?php if ($is_negated): ?>
@@ -299,7 +236,6 @@ if (!empty($negations)) {
                 ?>
                 <div class="sp-cv-section">
                     <h3 class="sp-cv-field-label">
-                        <span class="dashicons dashicons-yes"></span>
                         <?php echo esc_html($negation['field_label']); ?>
                     </h3>
                     <div class="sp-negation-notice">
@@ -317,12 +253,11 @@ if (!empty($negations)) {
             <div class="sp-profile-card">
                 <h2 class="sp-card-title">
                     <span class="dashicons dashicons-media-document"></span>
-                    Date Curriculum Vitae
+                    Date Complete
                 </h2>
                 <?php foreach ($negations as $negation): ?>
                 <div class="sp-cv-section">
                     <h3 class="sp-cv-field-label">
-                        <span class="dashicons dashicons-yes"></span>
                         <?php echo esc_html($negation['field_label']); ?>
                     </h3>
                     <div class="sp-negation-notice">
@@ -413,6 +348,41 @@ if (!empty($negations)) {
                             <div class="sp-bar-fill"
                                  style="width: <?php echo $intel['score']; ?>%; background-color: <?php echo $intel['color']; ?>;"></div>
                         </div>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+            <?php endif; ?>
+
+            <!-- Completion Badge (only if not 100%) -->
+            <?php if ($completion < 100): ?>
+            <div class="sp-profile-completion-badge">
+                <div class="sp-completion-circle" data-percentage="<?php echo $completion; ?>">
+                    <svg width="60" height="60">
+                        <circle class="sp-circle-bg" cx="30" cy="30" r="26"></circle>
+                        <circle class="sp-circle-progress" cx="30" cy="30" r="26"
+                                style="stroke-dashoffset: <?php echo 164.85 - (164.85 * $completion / 100); ?>;"></circle>
+                    </svg>
+                    <div class="sp-percentage"><?php echo $completion; ?>%</div>
+                </div>
+                <div style="flex:1">
+                    <div class="sp-completion-label">Profil<br>Incomplet</div>
+                </div>
+            </div>
+            <?php endif; ?>
+
+            <!-- Negations List -->
+            <?php if (!empty($negations)): ?>
+            <div class="sp-negations-sidebar">
+                <h3 class="sp-sidebar-title" style="margin:0 0 12px 0">
+                    <span class="dashicons dashicons-info"></span>
+                    Secțiuni Nesemnate
+                </h3>
+                <div class="sp-negations-list">
+                    <?php foreach ($negations as $negation): ?>
+                    <div class="sp-negation-item">
+                        <span class="dashicons dashicons-dismiss"></span>
+                        <span><?php echo esc_html($negation['field_label']); ?></span>
                     </div>
                     <?php endforeach; ?>
                 </div>
